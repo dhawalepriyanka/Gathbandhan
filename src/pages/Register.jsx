@@ -2,15 +2,45 @@ import { Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/components/Toast";
 
 const Register = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { success, error, warning } = useToast();
   const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [gender, setGender] = useState("");
+  const [dob, setDob] = useState("");
+  const [religion, setReligion] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const errs = {};
+    if (!firstName.trim()) errs.firstName = "First name is required";
+    if (!email.includes("@")) errs.email = "Enter a valid email";
+    if (!phone.trim() || phone.length < 10) errs.phone = "Enter a valid phone number";
+    if (password.length < 4) errs.password = "Password must be at least 4 characters";
+    if (!gender) errs.gender = "Please select gender";
+    if (!dob) errs.dob = "Date of birth is required";
+    if (!religion) errs.religion = "Please select religion";
+    return errs;
+  };
 
   const handleRegister = () => {
-    login(firstName || "User");
-    navigate("/home");
+    const errs = validateForm();
+    setErrors(errs);
+    
+    if (Object.keys(errs).length === 0) {
+      login(`${firstName} ${lastName}`.trim() || firstName || "User");
+      success("Registration successful! Welcome to Gathbandhan.");
+      navigate("/home");
+    } else {
+      error("Please fill in all required fields correctly.");
+    }
   };
 
   return (
@@ -33,54 +63,61 @@ const Register = () => {
             <div>
               <label className="text-xs font-medium text-foreground mb-1 block">First Name</label>
               <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="First Name" />
+              {errors.firstName && <p className="text-xs text-destructive mt-1">{errors.firstName}</p>}
             </div>
             <div>
               <label className="text-xs font-medium text-foreground mb-1 block">Last Name</label>
-              <input className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="Last Name" />
+              <input value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="Last Name" />
             </div>
           </div>
 
           <div>
             <label className="text-xs font-medium text-foreground mb-1 block">Email</label>
-            <input type="email" className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="your@email.com" />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="your@email.com" />
+            {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
           </div>
 
           <div>
             <label className="text-xs font-medium text-foreground mb-1 block">Phone</label>
-            <input type="tel" className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="+91 9876543210" />
+            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="+91 9876543210" />
+            {errors.phone && <p className="text-xs text-destructive mt-1">{errors.phone}</p>}
           </div>
 
           <div>
             <label className="text-xs font-medium text-foreground mb-1 block">Password</label>
-            <input type="password" className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="••••••••" />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="••••••••" />
+            {errors.password && <p className="text-xs text-destructive mt-1">{errors.password}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-medium text-foreground mb-1 block">Gender</label>
-              <select className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                <option>Select</option>
-                <option>Male</option>
-                <option>Female</option>
+              <select value={gender} onChange={(e) => setGender(e.target.value)} className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
               </select>
+              {errors.gender && <p className="text-xs text-destructive mt-1">{errors.gender}</p>}
             </div>
             <div>
               <label className="text-xs font-medium text-foreground mb-1 block">Date of Birth</label>
-              <input type="date" className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+              <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+              {errors.dob && <p className="text-xs text-destructive mt-1">{errors.dob}</p>}
             </div>
           </div>
 
           <div>
             <label className="text-xs font-medium text-foreground mb-1 block">Religion</label>
-            <select className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
-              <option>Select Religion</option>
-              <option>Hindu</option>
-              <option>Muslim</option>
-              <option>Christian</option>
-              <option>Sikh</option>
-              <option>Buddhist</option>
-              <option>Jain</option>
+            <select value={religion} onChange={(e) => setReligion(e.target.value)} className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              <option value="">Select Religion</option>
+              <option value="Hindu">Hindu</option>
+              <option value="Muslim">Muslim</option>
+              <option value="Christian">Christian</option>
+              <option value="Sikh">Sikh</option>
+              <option value="Buddhist">Buddhist</option>
+              <option value="Jain">Jain</option>
             </select>
+            {errors.religion && <p className="text-xs text-destructive mt-1">{errors.religion}</p>}
           </div>
 
           <button onClick={handleRegister} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 rounded-lg text-sm transition-colors">

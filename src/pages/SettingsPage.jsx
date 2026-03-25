@@ -2,6 +2,7 @@ import { useState } from "react";
 import { User, Lock, Bell, Save } from "lucide-react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
+import { useToast } from "@/components/Toast";
 
 const tabs = [
   { id: "profile", label: "Profile", icon: <User className="h-4 w-4" /> },
@@ -11,6 +12,54 @@ const tabs = [
 
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState("profile");
+  const { success, error, info } = useToast();
+  const [profileData, setProfileData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    city: "",
+    profession: "",
+    education: "",
+    aboutMe: ""
+  });
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: ""
+  });
+
+  const handleProfileUpdate = () => {
+    if (!profileData.fullName.trim()) {
+      error("Full name is required");
+      return;
+    }
+    if (!profileData.email.includes("@")) {
+      error("Please enter a valid email address");
+      return;
+    }
+    success("Profile updated successfully!");
+  };
+
+  const handlePasswordUpdate = () => {
+    if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+      error("All password fields are required");
+      return;
+    }
+    if (passwordData.newPassword.length < 4) {
+      error("New password must be at least 4 characters");
+      return;
+    }
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      error("New passwords do not match");
+      return;
+    }
+    success("Password updated successfully!");
+    setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+  };
+
+  const handleNotificationToggle = (label, isChecked) => {
+    info(`${label} ${isChecked ? 'enabled' : 'disabled'}`);
+  };
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -36,24 +85,36 @@ const SettingsPage = () => {
               <h2 className="text-lg font-display font-bold text-foreground mb-4">Update Profile</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  { label: "Full Name", placeholder: "Vaibhav Sharma", type: "text" },
-                  { label: "Email", placeholder: "vaibhav@email.com", type: "email" },
-                  { label: "Phone", placeholder: "+91 98765 43210", type: "tel" },
-                  { label: "City", placeholder: "Mumbai", type: "text" },
-                  { label: "Profession", placeholder: "Software Engineer", type: "text" },
-                  { label: "Education", placeholder: "B.Tech", type: "text" },
+                  { label: "Full Name", placeholder: "Vaibhav Sharma", type: "text", key: "fullName" },
+                  { label: "Email", placeholder: "vaibhav@email.com", type: "email", key: "email" },
+                  { label: "Phone", placeholder: "+91 98765 43210", type: "tel", key: "phone" },
+                  { label: "City", placeholder: "Mumbai", type: "text", key: "city" },
+                  { label: "Profession", placeholder: "Software Engineer", type: "text", key: "profession" },
+                  { label: "Education", placeholder: "B.Tech", type: "text", key: "education" },
                 ].map((f) => (
-                  <div key={f.label}>
+                  <div key={f.key}>
                     <label className="text-xs font-medium text-foreground mb-1 block">{f.label}</label>
-                    <input type={f.type} placeholder={f.placeholder} className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    <input 
+                      type={f.type} 
+                      value={profileData[f.key]}
+                      onChange={(e) => setProfileData({...profileData, [f.key]: e.target.value})}
+                      placeholder={f.placeholder} 
+                      className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" 
+                    />
                   </div>
                 ))}
               </div>
               <div>
                 <label className="text-xs font-medium text-foreground mb-1 block">About Me</label>
-                <textarea rows={3} placeholder="Tell us about yourself..." className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none" />
+                <textarea 
+                  rows={3} 
+                  value={profileData.aboutMe}
+                  onChange={(e) => setProfileData({...profileData, aboutMe: e.target.value})}
+                  placeholder="Tell us about yourself..." 
+                  className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none" 
+                />
               </div>
-              <button className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors">
+              <button onClick={handleProfileUpdate} className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors">
                 <Save className="h-4 w-4" /> Save Changes
               </button>
             </div>
@@ -62,13 +123,23 @@ const SettingsPage = () => {
           {activeTab === "password" && (
             <div className="space-y-4 max-w-md">
               <h2 className="text-lg font-display font-bold text-foreground mb-4">Change Password</h2>
-              {["Current Password", "New Password", "Confirm New Password"].map((l) => (
-                <div key={l}>
-                  <label className="text-xs font-medium text-foreground mb-1 block">{l}</label>
-                  <input type="password" placeholder="••••••••" className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+              {[
+                { label: "Current Password", key: "currentPassword" },
+                { label: "New Password", key: "newPassword" },
+                { label: "Confirm New Password", key: "confirmPassword" }
+              ].map((field) => (
+                <div key={field.key}>
+                  <label className="text-xs font-medium text-foreground mb-1 block">{field.label}</label>
+                  <input 
+                    type="password" 
+                    value={passwordData[field.key]}
+                    onChange={(e) => setPasswordData({...passwordData, [field.key]: e.target.value})}
+                    placeholder="••••••••" 
+                    className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" 
+                  />
                 </div>
               ))}
-              <button className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors">
+              <button onClick={handlePasswordUpdate} className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors">
                 <Lock className="h-4 w-4" /> Update Password
               </button>
             </div>
@@ -90,7 +161,12 @@ const SettingsPage = () => {
                     <p className="text-xs text-muted-foreground">{n.desc}</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" defaultChecked={i < 3} className="sr-only peer" />
+                    <input 
+                      type="checkbox" 
+                      defaultChecked={i < 3} 
+                      onChange={(e) => handleNotificationToggle(n.label, e.target.checked)}
+                      className="sr-only peer" 
+                    />
                     <div className="w-9 h-5 bg-muted rounded-full peer peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-background after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4" />
                   </label>
                 </div>

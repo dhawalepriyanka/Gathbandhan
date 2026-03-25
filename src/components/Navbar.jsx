@@ -75,8 +75,43 @@ const Navbar = () => {
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         <Link to={isLoggedIn ? "/home" : "/"} className="flex items-center gap-2">
           {/* <Heart className="h-7 w-7 text-primary fill-primary" /> */}
-          <span className="text-xl font-display font-bold text-foreground">Gathbandhan</span>
-          <Heart className="h-7 w-7 text-primary fill-primary" />
+          <div className="logo-container" style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <h1 className="logo" style={{ 
+              fontFamily: 'Cinzel, serif', 
+              color: '#8B0000', 
+              fontWeight: '700', 
+              letterSpacing: '0.08em',
+              fontSize: '1.8rem',
+              margin: 0,
+              padding: 0,
+              lineHeight: 1,
+              textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+              position: 'relative'
+            }}>
+              Gathbandhan
+              <span className="logo-underline" style={{
+                position: 'absolute',
+                bottom: '-2px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '80%',
+                height: '2px',
+                background: 'linear-gradient(90deg, transparent, #C9A34E, transparent)',
+                borderRadius: '1px'
+              }}></span>
+            </h1>
+            <span className="logo-subtitle" style={{ 
+              display: 'block', 
+              fontSize: '0.28em', 
+              color: '#C9A34E', 
+              fontWeight: '400', 
+              letterSpacing: '0.3em', 
+              marginTop: '0.4em',
+              fontFamily: 'Playfair Display, serif',
+              textTransform: 'uppercase',
+              opacity: 0.9
+            }}>Since 2025</span>
+          </div>
         </Link>
 
         <div className="hidden md:flex items-center gap-5">

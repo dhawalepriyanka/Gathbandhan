@@ -2,10 +2,12 @@ import { Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/components/Toast";
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { success, error } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
@@ -17,7 +19,10 @@ const Login = () => {
     setErrors(errs);
     if (Object.keys(errs).length === 0) {
       login(email.split("@")[0]);
+      success("Login successful! Welcome back.");
       navigate("/home");
+    } else {
+      error("Please fix the errors and try again.");
     }
   };
 
