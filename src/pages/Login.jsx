@@ -10,10 +10,10 @@ const Login = () => {
   const { success, error } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState({});
 
   const handleLogin = () => {
-    const errs: typeof errors = {};
+    const errs = {};
     if (!email.includes("@")) errs.email = "Enter a valid email";
     if (password.length < 4) errs.password = "Password must be at least 4 characters";
     setErrors(errs);

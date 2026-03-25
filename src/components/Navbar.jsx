@@ -148,13 +148,15 @@ const Navbar = () => {
                 <LogOut className="h-4 w-4" />
                 Logout
               </motion.button>
-              <motion.div 
-                className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm hover:shadow-md transition-all duration-300"
+              <motion.button 
+                onClick={() => navigate("/account")} 
+                className="h-8 w-8 rounded-full bg-primary/20 hover:bg-primary/30 flex items-center justify-center text-primary font-bold text-sm cursor-pointer transition-all duration-300"
                 whileHover={{ scale: 1.1 }}
                 transition={{ duration: 0.2 }}
+                title="Account"
               >
                 {userName.charAt(0).toUpperCase()}
-              </motion.div>
+              </motion.button>
             </>
           )}
         </div>

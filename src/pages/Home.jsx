@@ -99,9 +99,13 @@ const Home = () => {
               <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 h-4 w-4 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">3</span>
             </button>
-            <div className="h-9 w-9 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-sm">
+            <button
+              onClick={() => navigate("/account")}
+              className="h-9 w-9 rounded-full bg-accent/20 hover:bg-accent/30 flex items-center justify-center text-accent font-bold text-sm cursor-pointer transition-colors"
+              title="Account"
+            >
               {(userName || "U").charAt(0).toUpperCase()}
-            </div>
+            </button>
           </div>
         </header>
 
