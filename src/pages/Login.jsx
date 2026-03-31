@@ -3,24 +3,31 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/components/Toast";
+import { useLoading } from "@/hooks/useLoading";
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { success, error } = useToast();
+  const { startLoading, stopLoading } = useLoading();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const errs = {};
     if (!email.includes("@")) errs.email = "Enter a valid email";
     if (password.length < 4) errs.password = "Password must be at least 4 characters";
     setErrors(errs);
     if (Object.keys(errs).length === 0) {
-      login(email.split("@")[0]);
-      success("Login successful! Welcome back.");
-      navigate("/home");
+      startLoading('Logging in...');
+      // Simulate login delay
+      setTimeout(() => {
+        login(email.split("@")[0]);
+        success("Login successful! Welcome back.");
+        stopLoading();
+        navigate("/home");
+      }, 1500);
     } else {
       error("Please fix the errors and try again.");
     }

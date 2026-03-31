@@ -4,7 +4,11 @@ import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileData } from "@/hooks/useProfileData";
+import { useProfileCompletion } from "@/hooks/useProfileCompletion";
+import ProfileCompletionBar from "@/components/ProfileCompletionBar";
+import PhotoGallery from "@/components/PhotoGallery";
 import Navbar from "@/components/Navbar";
+import profile1 from "@/assets/profile1.jpg";
 
 const Account = () => {
   const navigate = useNavigate();
@@ -44,7 +48,22 @@ const Account = () => {
     about: profileData.about || "Passionate about finding love and building meaningful connections.",
     memberSince: "December 2024",
     profileCompletion: 70,
+    profilePhoto: profileData.profilePhoto || profile1,
+    photos: [profileData.profilePhoto || profile1],
   };
+
+  const profileCompletion = useProfileCompletion({
+    fullName: userDetails.name,
+    gender: "Female",
+    dateOfBirth: "1998-05-15",
+    religion: "Hindu",
+    maritalStatus: "Single",
+    highestEducation: userDetails.education,
+    profession: userDetails.profession,
+    city: userDetails.city,
+    profilePhotoUrl: userDetails.profilePhoto,
+    aboutMe: userDetails.about,
+  });
 
   const handleLogout = () => {
     logout();
@@ -66,8 +85,21 @@ const Account = () => {
         <p className="text-primary-foreground/70 text-sm">View and manage your profile</p>
       </motion.div>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-8 max-w-4xl pb-24 md:pb-8">
         <div className="grid gap-6">
+          {/* Photo Gallery */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0 }}
+            className="bg-card rounded-2xl border border-border p-6"
+          >
+            <h3 className="text-lg font-display font-bold text-foreground mb-4">Photo Gallery</h3>
+            <PhotoGallery
+              photos={userDetails.photos}
+              mainImage={userDetails.profilePhoto}
+            />
+          </motion.div>
           {/* Profile Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -103,20 +135,10 @@ const Account = () => {
             </div>
 
             {/* Profile Completion */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <p className="text-sm font-medium text-foreground">Profile Completion</p>
-                <span className="text-sm font-semibold text-primary">{userDetails.profileCompletion}%</span>
-              </div>
-              <div className="relative h-3 bg-muted rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${userDetails.profileCompletion}%` }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
-                />
-              </div>
-            </div>
+            <ProfileCompletionBar
+              completionPercentage={profileCompletion.completionPercentage}
+              message={profileCompletion.message}
+            />
           </motion.div>
 
           {/* Personal Information */}

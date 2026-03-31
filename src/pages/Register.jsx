@@ -3,11 +3,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/components/Toast";
+import { useLoading } from "@/hooks/useLoading";
+import MatrimonySelect from "@/components/MatrimonySelect";
+import { useMatrimonyOptions } from "@/hooks/useMatrimonyOptions";
 
 const Register = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { success, error, warning } = useToast();
+  const { startLoading, stopLoading } = useLoading();
+  const { getOptions, addCustomOption } = useMatrimonyOptions();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -30,14 +35,19 @@ const Register = () => {
     return errs;
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     const errs = validateForm();
     setErrors(errs);
     
     if (Object.keys(errs).length === 0) {
-      login(`${firstName} ${lastName}`.trim() || firstName || "User");
-      success("Registration successful! Welcome to Gathbandhan.");
-      navigate("/home");
+      startLoading('Creating account...');
+      // Simulate registration delay
+      setTimeout(() => {
+        login(`${firstName} ${lastName}`.trim() || firstName || "User");
+        success("Registration successful! Welcome to Gathbandhan.");
+        stopLoading();
+        navigate("/home");
+      }, 2000);
     } else {
       error("Please fill in all required fields correctly.");
     }
@@ -108,15 +118,14 @@ const Register = () => {
 
           <div>
             <label className="text-xs font-medium text-foreground mb-1 block">Religion</label>
-            <select value={religion} onChange={(e) => setReligion(e.target.value)} className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
-              <option value="">Select Religion</option>
-              <option value="Hindu">Hindu</option>
-              <option value="Muslim">Muslim</option>
-              <option value="Christian">Christian</option>
-              <option value="Sikh">Sikh</option>
-              <option value="Buddhist">Buddhist</option>
-              <option value="Jain">Jain</option>
-            </select>
+            <MatrimonySelect
+              options={getOptions('religion')}
+              value={religion}
+              onChange={setReligion}
+              placeholder="Select Religion"
+              fieldType="religion"
+              onAddCustom={addCustomOption}
+            />
             {errors.religion && <p className="text-xs text-destructive mt-1">{errors.religion}</p>}
           </div>
 

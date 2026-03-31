@@ -1,8 +1,15 @@
 import { Heart, User, Search, Settings, LogOut, ChevronDown, Bell, MessageSquare, Star, Menu } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useLoading } from "@/hooks/useLoading";
+import { useLikeBookmark } from "@/hooks/useLikeBookmark";
+import ThemeToggle from "@/components/ThemeToggle";
+import ProfileCompletionBar from "@/components/ProfileCompletionBar";
+import DashboardStats from "@/components/DashboardStats";
+import LikeBookmarkButtons from "@/components/LikeBookmarkButtons";
+import { useProfileCompletion } from "@/hooks/useProfileCompletion";
 import profile1 from "@/assets/profile1.jpg";
 import profile2 from "@/assets/profile2.jpg";
 import profile3 from "@/assets/profile3.jpg";
@@ -27,7 +34,34 @@ const successStories = [
 const Home = () => {
   const navigate = useNavigate();
   const { userName, logout } = useAuth();
+  const { startLoading, stopLoading } = useLoading();
+  const { isLiked, isBookmarked, toggleLike, toggleBookmark } = useLikeBookmark();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // Mock profile data for completion tracking
+  const mockProfileData = {
+    fullName: "John Doe",
+    gender: "Male",
+    dateOfBirth: "1995-05-15",
+    religion: "Hindu",
+    maritalStatus: "Single",
+    highestEducation: "Bachelor's",
+    profession: "Software Engineer",
+    city: "Bangalore",
+    profilePhotoUrl: profile1,
+    aboutMe: "Looking for a life partner...",
+  };
+
+  const profileCompletion = useProfileCompletion(mockProfileData);
+
+  useEffect(() => {
+    startLoading('Loading dashboard...');
+    // Simulate page load
+    const timer = setTimeout(() => {
+      stopLoading();
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -94,7 +128,8 @@ const Home = () => {
               <h1 className="text-xl font-display font-bold text-foreground capitalize">{userName || "User"}!</h1>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
             <button className="relative text-muted-foreground hover:text-foreground transition-colors">
               <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 h-4 w-4 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">3</span>
@@ -121,29 +156,19 @@ const Home = () => {
           <p className="text-primary-foreground/70 text-sm max-w-md">Discover compatible profiles tailored just for you</p>
         </motion.div>
 
-        <div className="px-6 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="px-6 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6 pb-24 md:pb-6">
           {/* Left column */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-card rounded-xl border border-border p-5">
-                <h3 className="text-sm font-semibold text-foreground mb-3">Profile Completion</h3>
-                <div className="relative h-2 bg-muted rounded-full overflow-hidden mb-2">
-                  <div className="absolute inset-y-0 left-0 bg-accent rounded-full" style={{ width: "70%" }} />
-                </div>
-                <p className="text-xs text-muted-foreground">70% Complete</p>
-              </div>
-              <div className="bg-card rounded-xl border border-border p-5">
-                <h3 className="text-sm font-semibold text-foreground mb-3">Membership</h3>
-                <span className="inline-block bg-gold/20 text-gold px-3 py-1 rounded-full text-xs font-semibold">Free Member</span>
-              </div>
-              <div className="bg-card rounded-xl border border-border p-5">
-                <h3 className="text-sm font-semibold text-foreground mb-3">Activity</h3>
-                <div className="space-y-1.5 text-xs text-muted-foreground">
-                  <p>Received: <span className="text-emerald-badge font-semibold">2 Accepted</span></p>
-                  <p>Sent: <span className="text-accent font-semibold">5 Responded</span></p>
-                </div>
-              </div>
+            {/* Profile Completion */}
+            <ProfileCompletionBar
+              completionPercentage={profileCompletion.completionPercentage}
+              message={profileCompletion.message}
+            />
+
+            {/* Dashboard Stats */}
+            <div>
+              <h3 className="text-lg font-semibold text-foreground mb-4">Your Activity Overview</h3>
+              <DashboardStats />
             </div>
 
             {/* Success Stories - vertical */}
@@ -181,13 +206,22 @@ const Home = () => {
                     transition={{ delay: i * 0.1 }}
                     className="bg-card rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow group"
                   >
-                    <div className="aspect-[3/4] overflow-hidden">
+                    <div className="aspect-[3/4] overflow-hidden relative">
                       <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     </div>
                     <div className="p-3">
                       <p className="text-sm font-semibold text-foreground">
                         <span className="text-primary">{p.name}</span>, {p.age}, {p.city}
                       </p>
+                      <LikeBookmarkButtons
+                        profileId={i}
+                        isLiked={isLiked(i)}
+                        isBookmarked={isBookmarked(i)}
+                        onLike={toggleLike}
+                        onBookmark={toggleBookmark}
+                        size="sm"
+                        showLabels={false}
+                      />
                       <button className={`mt-2 w-full text-xs font-semibold py-1.5 rounded-lg transition-colors ${
                         p.action === "View Profile"
                           ? "bg-accent/10 text-accent hover:bg-accent/20"
