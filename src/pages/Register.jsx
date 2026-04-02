@@ -6,6 +6,7 @@ import { useToast } from "@/components/Toast";
 import { useLoading } from "@/hooks/useLoading";
 import MatrimonySelect from "@/components/MatrimonySelect";
 import { useMatrimonyOptions } from "@/hooks/useMatrimonyOptions";
+import { authAPI, masterDataAPI } from "@/services/api";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -18,20 +19,75 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [gender, setGender] = useState("");
   const [dob, setDob] = useState("");
   const [religion, setReligion] = useState("");
+  const [religionId, setReligionId] = useState("");
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
     const errs = {};
-    if (!firstName.trim()) errs.firstName = "First name is required";
-    if (!email.includes("@")) errs.email = "Enter a valid email";
-    if (!phone.trim() || phone.length < 10) errs.phone = "Enter a valid phone number";
-    if (password.length < 4) errs.password = "Password must be at least 4 characters";
-    if (!gender) errs.gender = "Please select gender";
-    if (!dob) errs.dob = "Date of birth is required";
-    if (!religion) errs.religion = "Please select religion";
+    
+    // Name validation
+    if (!firstName.trim()) {
+      errs.firstName = "First name is required";
+    } else if (firstName.trim().length < 2) {
+      errs.firstName = "First name must be at least 2 characters";
+    }
+    
+    // Email validation
+    if (!email.trim()) {
+      errs.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errs.email = "Enter a valid email address";
+    }
+    
+    // Phone validation
+    if (!phone.trim()) {
+      errs.phone = "Phone number is required";
+    } else if (!/^\d{10,15}$/.test(phone.replace(/\D/g, ''))) {
+      errs.phone = "Enter a valid phone number (10-15 digits)";
+    }
+    
+    // Password validation
+    if (!password.trim()) {
+      errs.password = "Password is required";
+    } else if (password.length < 6) {
+      errs.password = "Password must be at least 6 characters";
+    }
+    
+    // Confirm password validation
+    if (!confirmPassword.trim()) {
+      errs.confirmPassword = "Please confirm your password";
+    } else if (password !== confirmPassword) {
+      errs.confirmPassword = "Passwords do not match";
+    }
+    
+    // Gender validation
+    if (!gender) {
+      errs.gender = "Please select gender";
+    }
+    
+    // Date of birth validation
+    if (!dob) {
+      errs.dob = "Date of birth is required";
+    } else {
+      const birthDate = new Date(dob);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+      if (age < 18 || (age === 18 && monthDiff < 0)) {
+        errs.dob = "You must be at least 18 years old";
+      }
+    }
+    
+    // Religion validation
+    if (!religion) {
+      errs.religion = "Please select religion";
+    }
+    
     return errs;
   };
 
@@ -41,13 +97,49 @@ const Register = () => {
     
     if (Object.keys(errs).length === 0) {
       startLoading('Creating account...');
-      // Simulate registration delay
-      setTimeout(() => {
-        login(`${firstName} ${lastName}`.trim() || firstName || "User");
+      
+      try {
+        // Prepare registration payload for backend
+        const registrationData = {
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          email: email.trim().toLowerCase(),
+          phone: phone.replace(/\D/g, ''), // Remove non-digits
+          password: password,
+          gender: gender,
+          dob: dob,
+          religion_id: religionId || null, // Send ID if available, otherwise null
+        };
+
+        // API call to backend
+        const response = await authAPI.register(registrationData);
+
+        // Auto-login after successful registration
+        if (response.token) {
+          localStorage.setItem('authToken', response.token);
+        }
+        
+        // Update auth context
+        const userName = response.user?.first_name || `${firstName} ${lastName}`.trim() || firstName;
+        login(userName);
+
         success("Registration successful! Welcome to Gathbandhan.");
         stopLoading();
-        navigate("/home");
-      }, 2000);
+
+        // Navigate to profile completion if needed, otherwise home
+        const redirectPath = response.user?.profile_completed ? "/home" : "/profile/edit";
+        navigate(redirectPath);
+        
+      } catch (err) {
+        stopLoading();
+        const errorMessage = err.message || "Registration failed. Please try again.";
+        error(errorMessage);
+        
+        // Handle specific field errors from backend
+        if (err.errors) {
+          setErrors(err.errors);
+        }
+      }
     } else {
       error("Please fill in all required fields correctly.");
     }
@@ -99,6 +191,12 @@ const Register = () => {
             {errors.password && <p className="text-xs text-destructive mt-1">{errors.password}</p>}
           </div>
 
+          <div>
+            <label className="text-xs font-medium text-foreground mb-1 block">Confirm Password</label>
+            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="••••••••" />
+            {errors.confirmPassword && <p className="text-xs text-destructive mt-1">{errors.confirmPassword}</p>}
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-medium text-foreground mb-1 block">Gender</label>
@@ -121,7 +219,11 @@ const Register = () => {
             <MatrimonySelect
               options={getOptions('religion')}
               value={religion}
-              onChange={setReligion}
+              onChange={(value) => {
+                setReligion(value);
+                // TODO: Map religion name to ID when master data is loaded
+                // For now, we'll send the name and backend can map it
+              }}
               placeholder="Select Religion"
               fieldType="religion"
               onAddCustom={addCustomOption}

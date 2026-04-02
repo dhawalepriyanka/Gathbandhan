@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/components/Toast";
 import { useLoading } from "@/hooks/useLoading";
+import { authAPI } from "@/services/api";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -12,22 +13,63 @@ const Login = () => {
   const { startLoading, stopLoading } = useLoading();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
 
   const handleLogin = async () => {
     const errs = {};
-    if (!email.includes("@")) errs.email = "Enter a valid email";
-    if (password.length < 4) errs.password = "Password must be at least 4 characters";
+    
+    // Enhanced validation
+    if (!email.trim()) {
+      errs.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errs.email = "Enter a valid email address";
+    }
+    
+    if (!password.trim()) {
+      errs.password = "Password is required";
+    } else if (password.length < 6) {
+      errs.password = "Password must be at least 6 characters";
+    }
+    
     setErrors(errs);
+    
     if (Object.keys(errs).length === 0) {
       startLoading('Logging in...');
-      // Simulate login delay
-      setTimeout(() => {
-        login(email.split("@")[0]);
+      
+      try {
+        // API call to backend
+        const response = await authAPI.login({
+          email: email.trim(),
+          password: password,
+          rememberMe: rememberMe
+        });
+
+        // Update auth context with user data
+        login(response.user?.first_name || response.user?.email || email.split("@")[0]);
+        
+        // Store user role/type if available
+        if (response.user?.role) {
+          localStorage.setItem('userRole', response.user.role);
+        }
+        
         success("Login successful! Welcome back.");
         stopLoading();
-        navigate("/home");
-      }, 1500);
+        
+        // Navigate based on user role or default to home
+        const redirectPath = response.user?.profile_completed ? "/home" : "/profile/edit";
+        navigate(redirectPath);
+        
+      } catch (err) {
+        stopLoading();
+        const errorMessage = err.message || "Login failed. Please check your credentials.";
+        error(errorMessage);
+        
+        // Set specific error if backend returns field errors
+        if (err.field) {
+          setErrors({ [err.field]: err.message });
+        }
+      }
     } else {
       error("Please fix the errors and try again.");
     }
@@ -58,6 +100,17 @@ const Login = () => {
             <label className="text-xs font-medium text-foreground mb-1 block">Password</label>
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="••••••••" />
             {errors.password && <p className="text-xs text-destructive mt-1">{errors.password}</p>}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input 
+              type="checkbox" 
+              id="remember" 
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="w-4 h-4 text-primary bg-background border-border rounded focus:ring-primary focus:ring-2"
+            />
+            <label htmlFor="remember" className="text-xs text-muted-foreground">Remember me</label>
           </div>
 
           <button onClick={handleLogin} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 rounded-lg text-sm transition-colors">

@@ -7,7 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { LoadingProvider } from "@/hooks/useLoading";
 import { DarkModeProvider } from "@/hooks/useDarkMode";
 import { ToastProvider } from "@/components/Toast";
-import LoadingBar from "@/components/LoadingBar";
+import LoadingSpinner from "./components/LoadingSpinner";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import Index from "./pages/Index";
 import Home from "./pages/Home";
@@ -32,7 +32,7 @@ const App = () => (
       <LoadingProvider>
         <ToastProvider>
           <TooltipProvider>
-            <LoadingBar />
+            <LoadingSpinner />
             <Toaster />
             <Sonner />
             <AuthProvider>
