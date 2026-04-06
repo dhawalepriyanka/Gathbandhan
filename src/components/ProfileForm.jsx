@@ -194,13 +194,27 @@ const ProfileForm = ({
     const { label, placeholder, type = "text", key, options } = field;
     
     if (type === "select") {
-      const fieldOptions = options || getOptions(key);
+      let fieldOptions = options;
+      
+      // Handle city dropdown based on selected state
+      if (key === 'city') {
+        fieldOptions = getOptions(key, formData.state);
+      } else {
+        fieldOptions = options || getOptions(key);
+      }
+      
       return (
         <div key={key}>
           <label className="text-xs font-medium text-foreground mb-1 block">{label}</label>
           <MatrimonySelect
             value={formData[key]}
-            onChange={(value) => handleInputChange(key, value)}
+            onChange={(value) => {
+              handleInputChange(key, value);
+              // Reset city when state changes
+              if (key === 'state') {
+                handleInputChange('city', '');
+              }
+            }}
             options={fieldOptions}
             placeholder={`Select ${label.toLowerCase()}`}
             fieldType={key}
@@ -261,7 +275,7 @@ const ProfileForm = ({
           {renderField({ label: "Marital Status", key: "maritalStatus", type: "select" })}
           {renderField({ label: "Religion", key: "religion", type: "select" })}
           {renderField({ label: "Caste", key: "caste", type: "select" })}
-          {renderField({ label: "Sub-caste", placeholder: "Your sub-caste", key: "subCaste" })}
+          {renderField({ label: "Sub-caste", key: "subCaste", type: "select" })}
           {renderField({ label: "Mother Tongue", key: "motherTongue", type: "select" })}
         </div>
       </div>
@@ -270,8 +284,8 @@ const ProfileForm = ({
       <div>
         <h3 className="text-sm font-semibold text-foreground mb-3 pb-2 border-b border-border">Physical Details</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {renderField({ label: "Height (cm)", type: "number", key: "height" })}
-          {renderField({ label: "Weight (kg)", type: "number", key: "weight" })}
+          {renderField({ label: "Height", key: "height", type: "select" })}
+          {renderField({ label: "Weight", key: "weight", type: "select" })}
           {renderField({ label: "Complexion", key: "complexion", type: "select" })}
           {renderField({ label: "Body Type", key: "bodyType", type: "select" })}
         </div>
@@ -283,7 +297,7 @@ const ProfileForm = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {renderField({ label: "Highest Education", key: "highestEducation", type: "select" })}
           {renderField({ label: "Profession/Occupation", key: "profession", type: "select" })}
-          {renderField({ label: "Annual Income", placeholder: "Your annual income", key: "annualIncome" })}
+          {renderField({ label: "Annual Income", key: "annualIncome", type: "select" })}
           {renderField({ label: "Company Name", placeholder: "Your company", key: "companyName" })}
         </div>
       </div>
@@ -317,7 +331,7 @@ const ProfileForm = ({
           {renderField({ label: "Father's Occupation", placeholder: "Your father's occupation", key: "fatherOccupation" })}
           {renderField({ label: "Mother's Name", placeholder: "Your mother's name", key: "motherName" })}
           {renderField({ label: "Mother's Occupation", placeholder: "Your mother's occupation", key: "motherOccupation" })}
-          {renderField({ label: "Number of Siblings", type: "number", key: "siblingsCount" })}
+          {renderField({ label: "Number of Siblings", key: "siblingsCount", type: "select" })}
         </div>
       </div>
 

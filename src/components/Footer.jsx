@@ -1,47 +1,119 @@
-import { Heart } from "lucide-react";
+import { Heart, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const Footer = () => (
-  <footer className="bg-foreground text-background py-12">
-    <div className="container mx-auto px-4">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <Heart className="h-6 w-6 text-primary fill-primary" />
-            <span className="text-lg font-display font-bold">Gathbandhan</span>
+const Footer = () => {
+  const currentYear = new Date().getFullYear();
+  
+  return (
+    <footer className="bg-card border-t border-border mt-auto">
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+          {/* Brand Section */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Heart className="h-6 w-6 text-primary fill-primary" />
+              <span className="text-xl font-display font-bold text-foreground">Gathbandhan</span>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              India's most trusted matrimony service. Connecting hearts and building lasting relationships.
+            </p>
+            <div className="flex space-x-3">
+              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Facebook className="h-5 w-5" />
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Twitter className="h-5 w-5" />
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Instagram className="h-5 w-5" />
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Linkedin className="h-5 w-5" />
+              </a>
+            </div>
           </div>
-          <p className="text-sm text-background/60">India's most trusted matrimony service. Connecting hearts since 2020.</p>
-        </div>
-        <div>
-          <h4 className="font-semibold text-sm mb-3">Quick Links</h4>
-          <div className="space-y-2 text-sm text-background/60">
-            <Link to="/about" className="block hover:text-background transition-colors">About Us</Link>
-            <Link to="/search" className="block hover:text-background transition-colors">Search</Link>
-            <Link to="/contact" className="block hover:text-background transition-colors">Contact</Link>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
+            <div className="space-y-2">
+              <Link to="/home" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                Home
+              </Link>
+              <Link to="/search" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                Search Profiles
+              </Link>
+              <Link to="/matches" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                Matches
+              </Link>
+              <Link to="/upgrade" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                Premium Plans
+              </Link>
+            </div>
+          </div>
+
+          {/* Support */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-4">Support</h4>
+            <div className="space-y-2">
+              <Link to="/about" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                About Us
+              </Link>
+              <Link to="/contact" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                Contact Us
+              </Link>
+              <Link to="/help" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                Help & Support
+              </Link>
+              <Link to="/faq" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                FAQ
+              </Link>
+            </div>
+          </div>
+
+          {/* Legal & Contact */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-4">Legal & Contact</h4>
+            <div className="space-y-2 mb-4">
+              <Link to="/privacy" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                Privacy Policy
+              </Link>
+              <Link to="/terms" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                Terms & Conditions
+              </Link>
+              <Link to="/refund" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                Refund Policy
+              </Link>
+            </div>
+            <div className="space-y-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4" />
+                <span>support@gathbandhan.com</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4" />
+                <span>+91 98765 43210</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                <span>Mumbai, India</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div>
-          <h4 className="font-semibold text-sm mb-3">Features</h4>
-          <div className="space-y-2 text-sm text-background/60">
-            <Link to="/kundli" className="block hover:text-background transition-colors">Kundli Matching</Link>
-            <Link to="/register" className="block hover:text-background transition-colors">Register Free</Link>
-            <span className="block">Premium Plans</span>
-          </div>
-        </div>
-        <div>
-          <h4 className="font-semibold text-sm mb-3">Contact</h4>
-          <div className="space-y-2 text-sm text-background/60">
-            <p>support@gathbandhan.com</p>
-            <p>+91 98765 43210</p>
-            <p>Mumbai, India</p>
+
+        {/* Copyright */}
+        <div className="border-t border-border pt-6">
+          <div className="flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
+            <p>© {currentYear} Gathbandhan Matrimony. All rights reserved.</p>
+            <div className="flex items-center gap-4 mt-4 md:mt-0">
+              <span>Made with ❤️ for Indian families</span>
+            </div>
           </div>
         </div>
       </div>
-      <div className="border-t border-background/10 pt-6 text-center text-xs text-background/40">
-        © 2026 Gathbandhan Matrimony. All rights reserved.
-      </div>
-    </div>
-  </footer>
-);
+    </footer>
+  );
+};
 
 export default Footer;

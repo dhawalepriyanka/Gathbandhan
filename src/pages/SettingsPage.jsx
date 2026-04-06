@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import { useToast } from "@/components/Toast";
 import { useProfileData } from "@/hooks/useProfileData";
+import { useMatrimonyOptions } from "@/hooks/useMatrimonyOptions";
 
 const tabs = [
   { id: "profile", label: "Profile", icon: <User className="h-4 w-4" /> },
@@ -15,6 +16,7 @@ const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const { success, error, info } = useToast();
   const { profileData: savedProfileData, saveProfileData } = useProfileData();
+  const { getOptions } = useMatrimonyOptions();
   
   // Profile form state - all matrimony fields
   const [formData, setFormData] = useState({
@@ -212,16 +214,31 @@ const SettingsPage = () => {
     const { label, placeholder, type = "text", key, options } = field;
     
     if (type === "select") {
+      let fieldOptions = options;
+      
+      // Handle city dropdown based on selected state
+      if (key === 'city') {
+        fieldOptions = getOptions(key, formData.state);
+      } else if (!options) {
+        fieldOptions = getOptions(key);
+      }
+      
       return (
         <div key={key}>
           <label className="text-xs font-medium text-foreground mb-1 block">{label}</label>
           <select 
             value={formData[key]}
-            onChange={(e) => handleInputChange(key, e.target.value)}
+            onChange={(e) => {
+              handleInputChange(key, e.target.value);
+              // Reset city when state changes
+              if (key === 'state') {
+                handleInputChange('city', '');
+              }
+            }}
             className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           >
             <option value="">Select {label.toLowerCase()}</option>
-            {options.map(opt => (
+            {fieldOptions.map(opt => (
               <option key={opt} value={opt}>{opt}</option>
             ))}
           </select>
@@ -312,9 +329,9 @@ const SettingsPage = () => {
                     type: "select", 
                     options: ["Hindu", "Muslim", "Christian", "Sikh", "Buddhist", "Other"] 
                   })}
-                  {renderField({ label: "Caste", placeholder: "Your caste", key: "caste" })}
-                  {renderField({ label: "Sub-caste", placeholder: "Your sub-caste", key: "subCaste" })}
-                  {renderField({ label: "Mother Tongue", placeholder: "Your mother tongue", key: "motherTongue" })}
+                  {renderField({ label: "Caste", key: "caste", type: "select" })}
+                  {renderField({ label: "Sub-caste", key: "subCaste", type: "select" })}
+                  {renderField({ label: "Mother Tongue", key: "motherTongue", type: "select" })}
                 </div>
               </div>
 
@@ -322,8 +339,8 @@ const SettingsPage = () => {
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-3 pb-2 border-b border-border">Physical Details</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {renderField({ label: "Height (cm)", type: "number", key: "height" })}
-                  {renderField({ label: "Weight (kg)", type: "number", key: "weight" })}
+                  {renderField({ label: "Height", key: "height", type: "select" })}
+                  {renderField({ label: "Weight", key: "weight", type: "select" })}
                   {renderField({ 
                     label: "Complexion", 
                     key: "complexion", 
@@ -350,7 +367,7 @@ const SettingsPage = () => {
                     options: ["10th", "12th", "Bachelor's", "Master's", "PhD", "Professional Degree"] 
                   })}
                   {renderField({ label: "Profession/Occupation", placeholder: "Your profession", key: "profession" })}
-                  {renderField({ label: "Annual Income", placeholder: "Your annual income", key: "annualIncome" })}
+                  {renderField({ label: "Annual Income", key: "annualIncome", type: "select" })}
                   {renderField({ label: "Company Name", placeholder: "Your company", key: "companyName" })}
                 </div>
               </div>
@@ -360,8 +377,8 @@ const SettingsPage = () => {
                 <h3 className="text-sm font-semibold text-foreground mb-3 pb-2 border-b border-border">Location Details</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {renderField({ label: "Country", key: "country", type: "select", options: ["India", "USA", "UK", "Canada", "Australia"] })}
-                  {renderField({ label: "State/Province", placeholder: "Your state", key: "state" })}
-                  {renderField({ label: "City", placeholder: "Your city", key: "city" })}
+                  {renderField({ label: "State/Province", key: "state", type: "select" })}
+                  {renderField({ label: "City", key: "city", type: "select" })}
                   {renderField({ label: "Address", placeholder: "Your address", key: "address" })}
                 </div>
               </div>
@@ -399,7 +416,7 @@ const SettingsPage = () => {
                   {renderField({ label: "Father's Occupation", placeholder: "Your father's occupation", key: "fatherOccupation" })}
                   {renderField({ label: "Mother's Name", placeholder: "Your mother's name", key: "motherName" })}
                   {renderField({ label: "Mother's Occupation", placeholder: "Your mother's occupation", key: "motherOccupation" })}
-                  {renderField({ label: "Number of Siblings", type: "number", key: "siblingsCount" })}
+                  {renderField({ label: "Number of Siblings", key: "siblingsCount", type: "select" })}
                 </div>
               </div>
 

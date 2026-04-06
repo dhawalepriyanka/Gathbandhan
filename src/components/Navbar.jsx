@@ -1,8 +1,9 @@
-import { Heart, Search, Menu, X, User, MessageSquare, Settings, Star, LogOut, Home, Moon, Sun } from "lucide-react";
+import { Heart, Search, Menu, X, User, MessageSquare, Settings, Star, LogOut, Home, Moon, Sun, Crown } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
+import logo from "@/assets/logo.png";
 
 const publicLinks = [
   { label: "Home", to: "/" },
@@ -74,44 +75,11 @@ const Navbar = () => {
       {/* Floating hearts */}
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         <Link to={isLoggedIn ? "/home" : "/"} className="flex items-center gap-2">
-          {/* <Heart className="h-7 w-7 text-primary fill-primary" /> */}
-          <div className="logo-container" style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <h1 className="logo" style={{ 
-              fontFamily: 'Cinzel, serif', 
-              color: '#8B0000', 
-              fontWeight: '700', 
-              letterSpacing: '0.08em',
-              fontSize: '1.8rem',
-              margin: 0,
-              padding: 0,
-              lineHeight: 1,
-              textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
-              position: 'relative'
-            }}>
-              Gathbandhan
-              <span className="logo-underline" style={{
-                position: 'absolute',
-                bottom: '-2px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '80%',
-                height: '2px',
-                background: 'linear-gradient(90deg, transparent, #C9A34E, transparent)',
-                borderRadius: '1px'
-              }}></span>
-            </h1>
-            <span className="logo-subtitle" style={{ 
-              display: 'block', 
-              fontSize: '0.28em', 
-              color: '#C9A34E', 
-              fontWeight: '400', 
-              letterSpacing: '0.3em', 
-              marginTop: '0.4em',
-              fontFamily: 'Playfair Display, serif',
-              textTransform: 'uppercase',
-              opacity: 0.9
-            }}>Since 2025</span>
-          </div>
+          <img 
+            src={logo} 
+            alt="Gathbandhan Logo" 
+           className="h-22 w-60 object-contain"
+          />
         </Link>
 
         <div className="hidden md:flex items-center gap-5">
@@ -139,6 +107,15 @@ const Navbar = () => {
           </button>
           {isLoggedIn && (
             <>
+              <motion.button 
+                onClick={() => navigate("/upgrade")}
+                className="text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg transition-all duration-300 ease-in-out flex items-center gap-2 hover:scale-105"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Crown className="h-4 w-4" />
+                Upgrade
+              </motion.button>
               <motion.button 
                 onClick={handleLogout} 
                 className="text-sm font-medium text-muted-foreground hover:text-destructive transition-all duration-300 ease-in-out flex items-center gap-1.5 hover:scale-105 hover:shadow-md"
@@ -192,14 +169,25 @@ const Navbar = () => {
             </motion.div>
           ))}
           {isLoggedIn && (
-            <motion.button 
-              onClick={() => { handleLogout(); setMobileOpen(false); }} 
-              className="block text-sm font-medium text-destructive py-2 transition-all duration-300 ease-in-out hover:scale-105"
-              whileHover={{ x: 5 }}
-              transition={{ duration: 0.2 }}
-            >
-              Logout
-            </motion.button>
+            <>
+              <motion.button 
+                onClick={() => { navigate("/upgrade"); setMobileOpen(false); }}
+                className="block text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg transition-all duration-300 ease-in-out hover:scale-105"
+                whileHover={{ x: 5 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Crown className="h-4 w-4 inline mr-2" />
+                Upgrade Premium
+              </motion.button>
+              <motion.button 
+                onClick={() => { handleLogout(); setMobileOpen(false); }} 
+                className="block text-sm font-medium text-destructive py-2 transition-all duration-300 ease-in-out hover:scale-105"
+                whileHover={{ x: 5 }}
+                transition={{ duration: 0.2 }}
+              >
+                Logout
+              </motion.button>
+            </>
           )}
         </motion.div>
       )}
