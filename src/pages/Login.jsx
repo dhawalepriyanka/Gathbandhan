@@ -11,6 +11,7 @@ const Login = () => {
   const { login } = useAuth();
   const { success, error } = useToast();
   const { startLoading, stopLoading } = useLoading();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -18,87 +19,76 @@ const Login = () => {
 
   const handleLogin = async () => {
     const errs = {};
-    
-    // Enhanced validation
+
+    // ✅ VALIDATION
     if (!email.trim()) {
       errs.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errs.email = "Enter a valid email address";
+      errs.email = "Enter valid email";
     }
-    
+
     if (!password.trim()) {
       errs.password = "Password is required";
     } else if (password.length < 6) {
-      errs.password = "Password must be at least 6 characters";
+      errs.password = "Min 6 characters";
     }
-    
-    setErrors(errs);
-<<<<<<< HEAD
-    
-    if (Object.keys(errs).length === 0) {
-      startLoading('Logging in...');
-      
-      try {
-        // API call to backend
-        const response = await authAPI.login({
-          email: email.trim(),
-          password: password,
-          rememberMe: rememberMe
-        });
 
-        // Update auth context with user data
-        login(response.user?.first_name || response.user?.email || email.split("@")[0]);
-        
-        // Store user role/type if available
-        if (response.user?.role) {
-          localStorage.setItem('userRole', response.user.role);
-        }
-        
-        success("Login successful! Welcome back.");
-        stopLoading();
-        
-        // Navigate based on user role or default to home
-        const redirectPath = response.user?.profile_completed ? "/home" : "/profile/edit";
-        navigate(redirectPath);
-        
-      } catch (err) {
-        stopLoading();
-        const errorMessage = err.message || "Login failed. Please check your credentials.";
-        error(errorMessage);
-        
-        // Set specific error if backend returns field errors
-        if (err.field) {
-          setErrors({ [err.field]: err.message });
-        }
-      }
-=======
+    setErrors(errs);
 
     if (Object.keys(errs).length === 0) {
       startLoading("Logging in...");
 
-      // Simulate login delay
-      setTimeout(() => {
-        const username = email.split("@")[0];
-
-        // store username (existing logic)
-        login(username);
-
-        // 🔥 ROLE LOGIC (NEW)
-        if (email === "admin@gmail.com") {
+      try {
+        // 🔥 ADMIN STATIC LOGIN (FRONTEND)
+        if (
+          email === "admin@gathbandhan.com" &&
+          password === "admin123"
+        ) {
           localStorage.setItem("role", "ADMIN");
-          success("Admin login successful!");
+          login("admin");
+          success("Admin login successful");
+          stopLoading();
+          navigate("/admin");
+          return;
+        }
+
+        // 🔥 BACKEND LOGIN
+        const response = await authAPI.login({
+          email: email.trim(),
+          password,
+          rememberMe,
+        });
+
+        const user = response.user;
+
+        // SAVE USER
+        login(user?.first_name || user?.email || email.split("@")[0]);
+
+        // ROLE
+        const role = user?.role || "USER";
+        localStorage.setItem("role", role);
+
+        success("Login successful!");
+        stopLoading();
+
+        // REDIRECT
+        if (role === "ADMIN") {
           navigate("/admin");
         } else {
-          localStorage.setItem("role", "USER");
-          success("Login successful! Welcome back.");
           navigate("/home");
         }
 
+      } catch (err) {
         stopLoading();
-      }, 1500);
->>>>>>> main
+        error(err.message || "Login failed");
+
+        if (err.field) {
+          setErrors({ [err.field]: err.message });
+        }
+      }
+
     } else {
-      error("Please fix the errors and try again.");
+      error("Fix errors first");
     }
   };
 
@@ -127,71 +117,62 @@ const Login = () => {
         </div>
 
         <div className="space-y-4">
+
+          {/* EMAIL */}
           <div>
-            <label className="text-xs font-medium text-foreground mb-1 block">
-              Email
-            </label>
+            <label className="text-xs font-medium mb-1 block">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full border rounded-lg px-4 py-2.5 text-sm"
               placeholder="your@email.com"
             />
             {errors.email && (
-              <p className="text-xs text-destructive mt-1">{errors.email}</p>
+              <p className="text-xs text-red-500">{errors.email}</p>
             )}
           </div>
 
+          {/* PASSWORD */}
           <div>
-            <label className="text-xs font-medium text-foreground mb-1 block">
-              Password
-            </label>
+            <label className="text-xs font-medium mb-1 block">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full border rounded-lg px-4 py-2.5 text-sm"
               placeholder="••••••••"
             />
             {errors.password && (
-              <p className="text-xs text-destructive mt-1">
-                {errors.password}
-              </p>
+              <p className="text-xs text-red-500">{errors.password}</p>
             )}
           </div>
 
-<<<<<<< HEAD
+          {/* REMEMBER */}
           <div className="flex items-center gap-2">
-            <input 
-              type="checkbox" 
-              id="remember" 
+            <input
+              type="checkbox"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
-              className="w-4 h-4 text-primary bg-background border-border rounded focus:ring-primary focus:ring-2"
             />
-            <label htmlFor="remember" className="text-xs text-muted-foreground">Remember me</label>
+            <span className="text-xs">Remember me</span>
           </div>
 
-          <button onClick={handleLogin} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 rounded-lg text-sm transition-colors">
-=======
+          {/* BUTTON */}
           <button
             onClick={handleLogin}
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 rounded-lg text-sm transition-colors"
+            className="w-full bg-primary text-white py-2.5 rounded-lg"
           >
->>>>>>> main
             Login
           </button>
 
-          <p className="text-center text-xs text-muted-foreground">
+          <p className="text-center text-xs">
             Don't have an account?{" "}
-            <Link
-              to="/register"
-              className="text-primary font-semibold hover:underline"
-            >
+            <Link to="/register" className="text-primary font-semibold">
               Register
             </Link>
           </p>
+
         </div>
       </div>
     </div>
