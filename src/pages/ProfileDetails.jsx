@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Heart, MapPin, GraduationCap, Briefcase, Calendar, ArrowLeft, Star, MessageSquare } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import profile1 from "@/assets/profile1.jpg";
@@ -6,11 +7,76 @@ import profile2 from "@/assets/profile2.jpg";
 import profile3 from "@/assets/profile3.jpg";
 import profile4 from "@/assets/profile4.jpg";
 
+// Mock data for profiles
 const allProfiles = {
-  "1": { name: "Priya Sharma", age: 25, city: "Pune", religion: "Hindu", education: "MBA", profession: "Software Engineer", image: profile1, height: "5'4\"", caste: "Brahmin", motherTongue: "Hindi", about: "A cheerful and ambitious person who loves traveling, cooking, and reading. Looking for a life partner who shares similar values and believes in mutual respect.", familyType: "Nuclear", fatherOccupation: "Business", siblings: "1 Brother" },
-  "2": { name: "Sneha Patel", age: 24, city: "Mumbai", religion: "Hindu", education: "B.Tech", profession: "Designer", image: profile2, height: "5'3\"", caste: "Patel", motherTongue: "Gujarati", about: "Creative and compassionate soul who enjoys art, music, and nature walks. Seeking someone kind-hearted and family-oriented.", familyType: "Joint", fatherOccupation: "Retired Govt", siblings: "1 Sister" },
-  "3": { name: "Aarushi Gupta", age: 26, city: "Delhi", religion: "Hindu", education: "M.Tech", profession: "Doctor", image: profile3, height: "5'5\"", caste: "Gupta", motherTongue: "Hindi", about: "Dedicated medical professional with a passion for helping others. Values honesty and a good sense of humor in a partner.", familyType: "Nuclear", fatherOccupation: "Doctor", siblings: "2 Sisters" },
-  "4": { name: "Neha Verma", age: 23, city: "Bangalore", religion: "Hindu", education: "BCA", profession: "Teacher", image: profile4, height: "5'2\"", caste: "Verma", motherTongue: "Hindi", about: "Fun-loving teacher who believes in the power of education. Enjoys dancing and weekend getaways.", familyType: "Joint", fatherOccupation: "Teacher", siblings: "1 Brother, 1 Sister" },
+  "1": {
+    id: 1,
+    name: "Priya Sharma",
+    age: 25,
+    city: "Pune",
+    religion: "Hindu",
+    education: "MBA",
+    profession: "Software Engineer",
+    image: profile1,
+    height: "5'4\"",
+    caste: "Brahmin",
+    motherTongue: "Hindi",
+    about: "A cheerful and ambitious person who loves traveling, cooking, and reading. Looking for a life partner who shares similar values and believes in mutual respect.",
+    familyType: "Nuclear",
+    fatherOccupation: "Business",
+    siblings: "1 Brother"
+  },
+  "2": {
+    id: 2,
+    name: "Sneha Patel",
+    age: 24,
+    city: "Mumbai",
+    religion: "Hindu",
+    education: "B.Tech",
+    profession: "Designer",
+    image: profile2,
+    height: "5'3\"",
+    caste: "Patel",
+    motherTongue: "Gujarati",
+    about: "Creative and compassionate soul who enjoys art, music, and nature walks. Seeking someone kind-hearted and family-oriented.",
+    familyType: "Joint",
+    fatherOccupation: "Retired Govt",
+    siblings: "1 Sister"
+  },
+  "3": {
+    id: 3,
+    name: "Anjali Gupta",
+    age: 26,
+    city: "Delhi",
+    religion: "Hindu",
+    education: "CA",
+    profession: "Accountant",
+    image: profile3,
+    height: "5'5\"",
+    caste: "Gupta",
+    motherTongue: "Hindi",
+    about: "Ambitious and family-oriented professional looking for a caring and understanding life partner.",
+    familyType: "Nuclear",
+    fatherOccupation: "Business",
+    siblings: "2 Brothers"
+  },
+  "4": {
+    id: 4,
+    name: "Kavya Reddy",
+    age: 23,
+    city: "Bangalore",
+    religion: "Hindu",
+    education: "B.Com",
+    profession: "Marketing",
+    image: profile4,
+    height: "5'2\"",
+    caste: "Reddy",
+    motherTongue: "Telugu",
+    about: "Fun-loving and modern girl with traditional values. Looking for someone who balances career and family well.",
+    familyType: "Nuclear",
+    fatherOccupation: "Engineer",
+    siblings: "1 Brother"
+  }
 };
 
 const InfoRow = ({ label, value }) => (

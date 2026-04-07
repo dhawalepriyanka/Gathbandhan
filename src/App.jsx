@@ -7,8 +7,9 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { LoadingProvider } from "@/hooks/useLoading";
 import { DarkModeProvider } from "@/hooks/useDarkMode";
 import { ToastProvider } from "@/components/Toast";
-import LoadingBar from "@/components/LoadingBar";
+import LoadingSpinner from "./components/LoadingSpinner";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import AuthenticatedLayout from "@/components/AuthenticatedLayout";
 import Index from "./pages/Index";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -22,6 +23,7 @@ import Matches from "./pages/Matches";
 import Messages from "./pages/Messages";
 import SettingsPage from "./pages/SettingsPage";
 import Account from "./pages/Account";
+import UpgradePremium from "./pages/UpgradePremium";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,7 +34,7 @@ const App = () => (
       <LoadingProvider>
         <ToastProvider>
           <TooltipProvider>
-            <LoadingBar />
+            <LoadingSpinner />
             <Toaster />
             <Sonner />
             <AuthProvider>
@@ -41,17 +43,18 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/home" element={<Home />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/profile/:id" element={<ProfileDetails />} />
-                <Route path="/kundli" element={<Kundli />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/matches" element={<Matches />} />
-                <Route path="/messages" element={<Messages />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/account" element={<Account />} />
+                <Route path="/home" element={<AuthenticatedLayout><Home /></AuthenticatedLayout>} />
+                <Route path="/search" element={<AuthenticatedLayout><Search /></AuthenticatedLayout>} />
+                <Route path="/profile/:id" element={<AuthenticatedLayout><ProfileDetails /></AuthenticatedLayout>} />
+                <Route path="/kundli" element={<AuthenticatedLayout><Kundli /></AuthenticatedLayout>} />
+                <Route path="/contact" element={<AuthenticatedLayout><Contact /></AuthenticatedLayout>} />
+                <Route path="/about" element={<AuthenticatedLayout><About /></AuthenticatedLayout>} />
+                <Route path="/matches" element={<AuthenticatedLayout><Matches /></AuthenticatedLayout>} />
+                <Route path="/messages" element={<AuthenticatedLayout><Messages /></AuthenticatedLayout>} />
+                <Route path="/settings" element={<AuthenticatedLayout><SettingsPage /></AuthenticatedLayout>} />
+                <Route path="/account" element={<AuthenticatedLayout><Account /></AuthenticatedLayout>} />
+                <Route path="/upgrade" element={<AuthenticatedLayout><UpgradePremium /></AuthenticatedLayout>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
