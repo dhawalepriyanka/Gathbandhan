@@ -10,6 +10,8 @@ import { ToastProvider } from "@/components/Toast";
 import LoadingSpinner from "./components/LoadingSpinner";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import AuthenticatedLayout from "@/components/AuthenticatedLayout";
+
+// NORMAL PAGES
 import Index from "./pages/Index";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -24,6 +26,13 @@ import Messages from "./pages/Messages";
 import SettingsPage from "./pages/SettingsPage";
 import Account from "./pages/Account";
 import UpgradePremium from "./pages/UpgradePremium";
+
+// ADMIN PAGES
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import UsersPage from "./pages/admin/UsersPage";
+import PaymentsPage from "./pages/admin/PaymentsPage";
+import VerificationPage from "./pages/admin/VerificationPage";
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,26 +47,38 @@ const App = () => (
             <Toaster />
             <Sonner />
             <AuthProvider>
-              <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-              <MobileBottomNav />
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/home" element={<AuthenticatedLayout><Home /></AuthenticatedLayout>} />
-                <Route path="/search" element={<AuthenticatedLayout><Search /></AuthenticatedLayout>} />
-                <Route path="/profile/:id" element={<AuthenticatedLayout><ProfileDetails /></AuthenticatedLayout>} />
-                <Route path="/kundli" element={<AuthenticatedLayout><Kundli /></AuthenticatedLayout>} />
-                <Route path="/contact" element={<AuthenticatedLayout><Contact /></AuthenticatedLayout>} />
-                <Route path="/about" element={<AuthenticatedLayout><About /></AuthenticatedLayout>} />
-                <Route path="/matches" element={<AuthenticatedLayout><Matches /></AuthenticatedLayout>} />
-                <Route path="/messages" element={<AuthenticatedLayout><Messages /></AuthenticatedLayout>} />
-                <Route path="/settings" element={<AuthenticatedLayout><SettingsPage /></AuthenticatedLayout>} />
-                <Route path="/account" element={<AuthenticatedLayout><Account /></AuthenticatedLayout>} />
-                <Route path="/upgrade" element={<AuthenticatedLayout><UpgradePremium /></AuthenticatedLayout>} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
+              <BrowserRouter>
+                <MobileBottomNav />
+
+                <Routes>
+                  {/* NORMAL ROUTES WITH AUTH */}
+                  <Route path="/" element={<Index />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+
+                  <Route path="/home" element={<AuthenticatedLayout><Home /></AuthenticatedLayout>} />
+                  <Route path="/search" element={<AuthenticatedLayout><Search /></AuthenticatedLayout>} />
+                  <Route path="/profile/:id" element={<AuthenticatedLayout><ProfileDetails /></AuthenticatedLayout>} />
+                  <Route path="/kundli" element={<AuthenticatedLayout><Kundli /></AuthenticatedLayout>} />
+                  <Route path="/contact" element={<AuthenticatedLayout><Contact /></AuthenticatedLayout>} />
+                  <Route path="/about" element={<AuthenticatedLayout><About /></AuthenticatedLayout>} />
+                  <Route path="/matches" element={<AuthenticatedLayout><Matches /></AuthenticatedLayout>} />
+                  <Route path="/messages" element={<AuthenticatedLayout><Messages /></AuthenticatedLayout>} />
+                  <Route path="/settings" element={<AuthenticatedLayout><SettingsPage /></AuthenticatedLayout>} />
+                  <Route path="/account" element={<AuthenticatedLayout><Account /></AuthenticatedLayout>} />
+                  <Route path="/upgrade" element={<AuthenticatedLayout><UpgradePremium /></AuthenticatedLayout>} />
+
+                  {/* ADMIN ROUTES */}
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/admin/users" element={<UsersPage />} />
+                  <Route path="/admin/payments" element={<PaymentsPage />} />
+                  <Route path="/admin/verification" element={<VerificationPage />} />
+
+                  {/* NOT FOUND */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+
+              </BrowserRouter>
             </AuthProvider>
           </TooltipProvider>
         </ToastProvider>
@@ -65,7 +86,5 @@ const App = () => (
     </DarkModeProvider>
   </QueryClientProvider>
 );
-
-// Test comment to verify file is being updated
 
 export default App;
