@@ -12,13 +12,16 @@ const AdminLayout = ({ children }) => {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen overflow-hidden">
 
       {/* SIDEBAR */}
-      <div className={`${open ? "w-64" : "w-16"} bg-gradient-to-b from-purple-600 to-pink-500 text-white transition-all`}>
-        
-        <div className="flex justify-between p-4">
-          {open && <h2 className="font-bold">Admin</h2>}
+      <div
+        className={`${
+          open ? "w-64" : "w-16"
+        } fixed h-full bg-gradient-to-b from-purple-600 to-pink-500 text-white transition-all duration-300`}
+      >
+        <div className="flex justify-between items-center p-4">
+          {open && <h2 className="font-bold text-lg">Admin</h2>}
           <button onClick={() => setOpen(!open)}>
             {open ? <X /> : <Menu />}
           </button>
@@ -26,30 +29,36 @@ const AdminLayout = ({ children }) => {
 
         <nav className="p-4 space-y-3">
 
-          <Link to="/admin" className="flex gap-2 hover:bg-white/20 p-2 rounded">
+          <Link to="/admin" className="flex items-center gap-2 hover:bg-white/20 p-2 rounded">
             <LayoutDashboard size={18} />
             {open && "Dashboard"}
           </Link>
 
-          <Link to="/admin/users" className="flex gap-2 hover:bg-white/20 p-2 rounded">
-            <Users size={18} />
-            {open && "Users"}
+          <Link to="/admin/users" className="flex items-center gap-2 hover:bg-white/20 p-2 rounded">
+            
+           👩🏻‍💻 {open && "Users"}
           </Link>
 
-          <Link to="/admin/payments" className="flex gap-2 hover:bg-white/20 p-2 rounded">
-            <Users size={18} />
-            {open && "Payments"}
+          <Link to="/admin/payments" className="flex items-center gap-2 hover:bg-white/20 p-2 rounded">
+            💳 {open && "Payments"}
           </Link>
 
-          <Link to="/admin/verification" className="flex gap-2 hover:bg-white/20 p-2 rounded">
-            <Users size={18} />
-            {open && "Verification"}
+          <Link to="/admin/verification" className="flex items-center gap-2 hover:bg-white/20 p-2 rounded">
+            ✔ {open && "Verification"}
           </Link>
 
-
+          <Link to="/admin/reports" className="flex items-center gap-2 hover:bg-white/20 p-2 rounded">
+            🚨 {open && "Reports"}
+          </Link>
           
+          <Link to="/admin/settings" className="flex items-center gap-2 hover:bg-white/20 p-2 rounded">
+            ⚙ {open && "Settings"}
+          </Link>
 
-          <button onClick={logout} className="flex gap-2 mt-6 hover:bg-red-500 p-2 rounded w-full">
+          <button
+            onClick={logout}
+            className="flex items-center gap-2 mt-6 hover:bg-red-500 p-2 rounded w-full"
+          >
             <LogOut size={18} />
             {open && "Logout"}
           </button>
@@ -57,10 +66,15 @@ const AdminLayout = ({ children }) => {
         </nav>
       </div>
 
-      {/* MAIN */}
-      <div className="flex-1 bg-gray-50 p-6">
+      {/* MAIN CONTENT */}
+      <div
+        className={`flex-1 bg-gray-50 overflow-y-auto transition-all duration-300 ${
+          open ? "ml-64" : "ml-16"
+        }`}
+      >
         {children}
       </div>
+
     </div>
   );
 };

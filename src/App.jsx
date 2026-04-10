@@ -32,6 +32,9 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import UsersPage from "./pages/admin/UsersPage";
 import PaymentsPage from "./pages/admin/PaymentsPage";
 import VerificationPage from "./pages/admin/VerificationPage";
+import ReportsPage from "./pages/admin/ReportsPage";
+import SettingPage from "./pages/admin/SettingPage";
+
 
 import NotFound from "./pages/NotFound";
 
@@ -73,6 +76,9 @@ const App = () => (
                   <Route path="/admin/users" element={<UsersPage />} />
                   <Route path="/admin/payments" element={<PaymentsPage />} />
                   <Route path="/admin/verification" element={<VerificationPage />} />
+                  <Route path="/admin/reports" element={<ReportsPage />} />
+                  <Route path="/admin/settings" element={<SettingPage />} />
+
 
                   {/* NOT FOUND */}
                   <Route path="*" element={<NotFound />} />

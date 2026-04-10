@@ -9,32 +9,38 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
+import { Users, Heart, Crown, UserPlus } from "lucide-react";
 
 const AdminDashboard = () => {
+
   const stats = [
     {
       title: "Total Users",
       value: "1,890",
       sub: "+10% This Month",
-      color: "from-purple-500 to-indigo-500",
+      icon: <Users />,
+      color: "bg-indigo-100 text-indigo-600",
     },
     {
       title: "Matches",
       value: "560",
       sub: "+8% This Month",
-      color: "from-pink-500 to-rose-500",
+      icon: <Heart />,
+      color: "bg-pink-100 text-pink-600",
     },
     {
       title: "Premium Users",
       value: "320",
       sub: "+5% This Month",
-      color: "from-teal-400 to-cyan-500",
+      icon: <Crown />,
+      color: "bg-yellow-100 text-yellow-600",
     },
     {
       title: "New Signups",
       value: "410",
       sub: "Last 7 Days",
-      color: "from-orange-400 to-red-500",
+      icon: <UserPlus />,
+      color: "bg-green-100 text-green-600",
     },
   ];
 
@@ -45,157 +51,198 @@ const AdminDashboard = () => {
     { name: "Apr", thisMonth: 6000, lastMonth: 5500 },
     { name: "May", thisMonth: 10000, lastMonth: 7000 },
     { name: "Jun", thisMonth: 8000, lastMonth: 6500 },
-    { name: "Jul", thisMonth: 12000, lastMonth: 9000 },
-    { name: "Aug", thisMonth: 15000, lastMonth: 11000 },
-    { name: "Sep", thisMonth: 18000, lastMonth: 13000 },
-    { name: "Oct", thisMonth: 20000, lastMonth: 16000 },
-    { name: "Nov", thisMonth: 22000, lastMonth: 18000 },
-    { name: "Dec", thisMonth: 25000, lastMonth: 20000 },
-    
   ];
 
   return (
     <AdminLayout>
-      <div className="bg-gray-50 min-h-screen p-6">
+      <div className="bg-gradient-to-br from-gray-100 to-gray-50 min-h-screen py-6">
 
-        {/* HEADER */}
-        <h1 className="text-2xl font-bold mb-6">
-          Matrimony Admin Dashboard
-        </h1>
+        <div className="max-w-7xl mx-auto px-4">
 
-        {/* STATS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          {stats.map((item, i) => (
-            <div
-              key={i}
-              className={`bg-gradient-to-r ${item.color} text-white p-5 rounded-xl shadow-lg`}
-            >
-              <p className="text-sm">{item.title}</p>
-              <h2 className="text-2xl font-bold">{item.value}</h2>
-              <p className="text-xs opacity-80">{item.sub}</p>
-            </div>
-          ))}
-        </div>
+          {/* HEADER */}
+          <h1 className="text-2xl font-semibold text-gray-800 mb-6">
+            Matrimony Admin Dashboard
+          </h1>
 
-        {/* GRAPH + ACTIVITY */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* STATS */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
 
-          {/* GRAPH */}
-          <div className="bg-white p-5 rounded-xl shadow">
-            <h2 className="font-semibold mb-4">User Growth</h2>
+            {stats.map((item, i) => (
+              <div
+                key={i}
+                className="bg-white p-5 rounded-xl border hover:shadow-md transition flex justify-between items-center"
+              >
+                <div>
+                  <p className="text-sm text-gray-500">{item.title}</p>
+                  <h2 className="text-2xl font-bold text-gray-800 mt-1">
+                    {item.value}
+                  </h2>
+                  <p className="text-xs text-green-500">{item.sub}</p>
+                </div>
 
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-
-                <Line
-                  type="monotone"
-                  dataKey="thisMonth"
-                  stroke="#7c3aed"
-                  strokeWidth={3}
-                />
-
-                <Line
-                  type="monotone"
-                  dataKey="lastMonth"
-                  stroke="#94a3b8"
-                  strokeWidth={3}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* ACTIVITY */}
-          <div className="bg-white p-5 rounded-xl shadow">
-            <h2 className="font-semibold mb-3">Recent Activity</h2>
-            <ul className="text-sm space-y-2 text-gray-600">
-              <li>• New user registered</li>
-              <li>• Rahul & Priya matched</li>
-              <li>• Premium plan purchased ₹1200</li>
-              <li>• Swati updated profile</li>
-              <li>• Payment failed ₹500</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* USERS TABLE */}
-        <div className="mt-6 bg-white p-5 rounded-xl shadow">
-          <h2 className="font-semibold mb-3">Recent Users</h2>
-
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-gray-500 border-b">
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr className="text-center border-b">
-                <td>1</td>
-                <td>Rajesh</td>
-                <td>rajesh@gmail.com</td>
-              </tr>
-              <tr className="text-center border-b">
-                <td>2</td>
-                <td>Rina</td>
-                <td>rina@gmail.com</td>
-              </tr>
-              <tr className="text-center">
-                <td>3</td>
-                <td>Rohit</td>
-                <td>rohit@gmail.com</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        {/* MATCHES */}
-        <div className="mt-6 bg-white p-5 rounded-xl shadow">
-          <h2 className="font-semibold mb-4">Recent Matches</h2>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-
-            <div className="bg-gray-100 p-2 rounded-xl">
-              <div className="flex gap-2">
-                <img
-                  src="https://images.unsplash.com/photo-1589571894960-20bbe2828d0a"
-                  className="w-1/2 h-32 object-cover rounded-lg"
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1615109398623-88346a601842"
-                  className="w-1/2 h-32 object-cover rounded-lg"
-                />
+                <div className={`${item.color} p-3 rounded-lg`}>
+                  {item.icon}
+                </div>
               </div>
-              <p className="mt-2 text-center font-medium">
-                Rahul & Priya
-              </p>
+            ))}
+
+          </div>
+
+          {/* GRAPH + ACTIVITY */}
+          <div className="grid lg:grid-cols-2 gap-6 mb-6">
+
+            {/* GRAPH */}
+            <div className="bg-white p-5 rounded-xl border hover:shadow-md transition">
+              <h2 className="font-semibold mb-4 text-gray-700">
+                User Growth Overview
+              </h2>
+
+              <ResponsiveContainer width="100%" height={260}>
+                <LineChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+
+                  <Line
+                    type="monotone"
+                    dataKey="thisMonth"
+                    stroke="#6366f1"
+                    strokeWidth={3}
+                  />
+
+                  <Line
+                    type="monotone"
+                    dataKey="lastMonth"
+                    stroke="#94a3b8"
+                    strokeWidth={3}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
 
-            <div className="bg-gray-100 p-2 rounded-xl">
-              <div className="flex gap-2">
-                <img
-                  src="https://images.unsplash.com/photo-1607746882042-944635dfe10e"
-                  className="w-1/2 h-32 object-cover rounded-lg"
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e"
-                  className="w-1/2 h-32 object-cover rounded-lg"
-                />
-              </div>
-              <p className="mt-2 text-center font-medium">
-                Amit & Nisha
-              </p>
+            {/* ACTIVITY */}
+            <div className="bg-white p-5 rounded-xl border hover:shadow-md transition">
+              <h2 className="font-semibold mb-4 text-gray-700">
+                Recent Activity
+              </h2>
+
+              <ul className="space-y-3 text-sm">
+                <li className="flex justify-between items-center">
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    New user registered
+                  </span>
+                  <span className="text-xs text-gray-400">2 min ago</span>
+                </li>
+
+                <li className="flex justify-between items-center">
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    Rahul & Priya matched
+                  </span>
+                  <span className="text-xs text-gray-400">10 min ago</span>
+                </li>
+
+                <li className="flex justify-between items-center">
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
+                    Premium purchased ₹1200
+                  </span>
+                  <span className="text-xs text-gray-400">1 hr ago</span>
+                </li>
+
+                <li className="flex justify-between items-center">
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+                    Profile updated
+                  </span>
+                  <span className="text-xs text-gray-400">3 hr ago</span>
+                </li>
+              </ul>
             </div>
 
           </div>
-        </div>
 
+          {/* USERS TABLE */}
+          <div className="bg-white p-5 rounded-xl border hover:shadow-md transition mb-6">
+            <h2 className="font-semibold mb-4 text-gray-700">
+              Recent Users
+            </h2>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+
+                <thead className="bg-gray-100 text-gray-600 text-xs font-semibold">
+                  <tr>
+                    <th className="p-4 text-left">ID</th>
+                    <th className="p-4 text-left">Name</th>
+                    <th className="p-4 text-left">Email</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {["Rajesh", "Rina", "Rohit"].map((name, i) => (
+                    <tr
+                      key={i}
+                      className="border-t hover:bg-gray-50 transition duration-200"
+                    >
+                      <td className="p-4">{i + 1}</td>
+                      <td className="p-4">{name}</td>
+                      <td className="p-4">{name.toLowerCase()}@gmail.com</td>
+                    </tr>
+                  ))}
+                </tbody>
+
+              </table>
+            </div>
+          </div>
+
+          {/* MATCHES */}
+          <div className="bg-white p-5 rounded-xl border hover:shadow-md transition">
+            <h2 className="font-semibold mb-4 text-gray-700">
+              Recent Matches
+            </h2>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+
+              <div className="bg-gray-50 p-3 rounded-xl border hover:shadow-md transition">
+                <div className="flex gap-2">
+                  <img
+                    src="https://images.unsplash.com/photo-1589571894960-20bbe2828d0a"
+                    className="w-1/2 h-28 object-cover rounded-lg"
+                  />
+                  <img
+                    src="https://images.unsplash.com/photo-1615109398623-88346a601842"
+                    className="w-1/2 h-28 object-cover rounded-lg"
+                  />
+                </div>
+                <p className="mt-2 text-center font-medium text-gray-700">
+                  Rahul & Priya
+                </p>
+              </div>
+
+              <div className="bg-gray-50 p-3 rounded-xl border hover:shadow-md transition">
+                <div className="flex gap-2">
+                  <img
+                    src="https://images.unsplash.com/photo-1607746882042-944635dfe10e"
+                    className="w-1/2 h-28 object-cover rounded-lg"
+                  />
+                  <img
+                    src="https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e"
+                    className="w-1/2 h-28 object-cover rounded-lg"
+                  />
+                </div>
+                <p className="mt-2 text-center font-medium text-gray-700">
+                  Amit & Nisha
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
       </div>
     </AdminLayout>
   );
