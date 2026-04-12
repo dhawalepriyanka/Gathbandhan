@@ -51,6 +51,12 @@ const AdminDashboard = () => {
     { name: "Apr", thisMonth: 6000, lastMonth: 5500 },
     { name: "May", thisMonth: 10000, lastMonth: 7000 },
     { name: "Jun", thisMonth: 8000, lastMonth: 6500 },
+    { name: "Jul", thisMonth: 12000, lastMonth: 9000 },
+    { name: "Aug", thisMonth: 15000, lastMonth: 12000 },
+    { name: "Sep", thisMonth: 13000, lastMonth: 11000 },
+    { name: "Oct", thisMonth: 17000, lastMonth: 14000 },
+    { name: "Nov", thisMonth: 16000, lastMonth: 13000 },
+    { name: "Dec", thisMonth: 20000, lastMonth: 15000 },
   ];
 
   return (
